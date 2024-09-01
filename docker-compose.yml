@@ -2,24 +2,24 @@ version: "3"
 services:
 
   auth-db:
-    image: postgres:11
+    image: postgres:15
     container_name: auth-db
     restart: always
     environment:
       - POSTGRES_DB=auth-db
-      - POSTGRES_DB=admin
-      - POSTGRES_PASSWORD=123456
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
     ports:
       - 5534:5432
   
   product-db:
-    image: postgres:11
+    image: postgres:15
     container_name: product-db
     restart: always
     environment:
       - POSTGRES_DB=product-db
-      - POSTGRES_DB=admin
-      - POSTGRES_PASSWORD=123456
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
     ports:
       - 5535:5432
 
