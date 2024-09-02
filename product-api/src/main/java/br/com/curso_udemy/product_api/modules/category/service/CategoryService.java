@@ -1,10 +1,12 @@
 package br.com.curso_udemy.product_api.modules.category.service;
 
+import br.com.curso_udemy.product_api.config.exceptions.SuccessResponse;
 import br.com.curso_udemy.product_api.config.exceptions.ValidationException;
 import br.com.curso_udemy.product_api.modules.category.dto.CategoryRequest;
 import br.com.curso_udemy.product_api.modules.category.dto.CategoryResponse;
 import br.com.curso_udemy.product_api.modules.category.model.Category;
 import br.com.curso_udemy.product_api.modules.category.repository.CategoryRepository;
+import br.com.curso_udemy.product_api.modules.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +20,12 @@ public class CategoryService {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
+	@Autowired
+	private ProductService productService;
 
 	public CategoryResponse findByIdResponse(Integer id) {
-		if(isEmpty(id)) {
-			throw new ValidationException("The category id was not informed");
-		}
+		validateInformedId(id);
+
 		return CategoryResponse.of(findById(id));
 	}
 
@@ -55,6 +58,21 @@ public class CategoryService {
 		validateCategoryNameInformed(categoryRequest);
 		var category = categoryRepository.save(Category.of(categoryRequest));
 		return CategoryResponse.of(category);
+	}
+
+	public SuccessResponse delete(Integer id) {
+		validateInformedId(id);
+		if(productService.existsBySupplierId(id)) {
+			throw new ValidationException("Cannot delete category with associated products");
+		}
+		categoryRepository.deleteById(id);
+		return SuccessResponse.create("Category deleted successfully");
+	}
+
+	private void validateInformedId(Integer id) {
+		if(isEmpty(id)) {
+			throw new ValidationException("The Category id was not informed");
+		}
 	}
 
 	private void validateCategoryNameInformed(CategoryRequest categoryRequest) {

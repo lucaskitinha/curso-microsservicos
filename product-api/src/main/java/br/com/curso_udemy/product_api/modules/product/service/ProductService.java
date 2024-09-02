@@ -1,5 +1,6 @@
 package br.com.curso_udemy.product_api.modules.product.service;
 
+import br.com.curso_udemy.product_api.config.exceptions.SuccessResponse;
 import br.com.curso_udemy.product_api.config.exceptions.ValidationException;
 import br.com.curso_udemy.product_api.modules.category.model.Category;
 import br.com.curso_udemy.product_api.modules.category.service.CategoryService;
@@ -29,10 +30,16 @@ public class ProductService {
 
 	private static final Integer ZERO = 0;
 
+	public Boolean existsByCategoryId(Integer categoryId){
+		return productRepository.existsByCategoryId(categoryId);
+	}
+
+	public Boolean existsBySupplierId(Integer supplierId){
+		return productRepository.existsBySupplierId(supplierId);
+	}
+
 	public ProductResponse findByIdResponse(Integer id) {
-		if(isEmpty(id)) {
-			throw new ValidationException("The product id was not informed");
-		}
+		validateInformedId(id);
 		return ProductResponse.of(findById(id));
 	}
 
@@ -91,6 +98,18 @@ public class ProductService {
 		var supplier = supplierService.findById(request.getSupplierId());
 		var product = productRepository.save(Product.of(request,category, supplier));
 		return ProductResponse.of(product);
+	}
+
+	public SuccessResponse delete(Integer id) {
+		validateInformedId(id);
+        productRepository.deleteById(id);
+        return SuccessResponse.create("Product deleted successfully");
+	}
+
+	private void validateInformedId(Integer id) {
+		if(isEmpty(id)) {
+			throw new ValidationException("The Product id was not informed");
+		}
 	}
 
 	private void validateProductDataNotInformed(ProductRequest request) {

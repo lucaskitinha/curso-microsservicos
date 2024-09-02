@@ -1,7 +1,9 @@
 package br.com.curso_udemy.product_api.modules.supplier.service;
 
+import br.com.curso_udemy.product_api.config.exceptions.SuccessResponse;
 import br.com.curso_udemy.product_api.config.exceptions.ValidationException;
 import br.com.curso_udemy.product_api.modules.category.dto.CategoryResponse;
+import br.com.curso_udemy.product_api.modules.product.service.ProductService;
 import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierRequest;
 import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierResponse;
 import br.com.curso_udemy.product_api.modules.supplier.model.Supplier;
@@ -19,11 +21,12 @@ public class SupplierService {
 
 	@Autowired
 	private SupplierRepository supplierRepository;
+	@Autowired
+	private ProductService productService;
 
 	public SupplierResponse findByIdResponse(Integer id) {
-		if(isEmpty(id)) {
-			throw new ValidationException("The supplier id was not informed");
-		}
+		validateInformedId(id);
+
 		return SupplierResponse.of(findById(id));
 	}
 
@@ -56,6 +59,21 @@ public class SupplierService {
 		validateSupplierNameInformed(supplierRequest);
 		Supplier supplier = supplierRepository.save(Supplier.of(supplierRequest));
 		return SupplierResponse.of(supplier);
+	}
+
+	public SuccessResponse delete(Integer id) {
+		validateInformedId(id);
+		if(productService.existsBySupplierId(id)) {
+			throw new ValidationException("Cannot delete supplier with associated products");
+		}
+		supplierRepository.deleteById(id);
+		return SuccessResponse.create("Supplier deleted successfully");
+	}
+
+	private void validateInformedId(Integer id) {
+		if(isEmpty(id)) {
+			throw new ValidationException("The supplier id was not informed");
+		}
 	}
 
 	private void validateSupplierNameInformed(SupplierRequest supplierRequest) {
