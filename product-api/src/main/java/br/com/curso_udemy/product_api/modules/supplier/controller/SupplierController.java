@@ -1,6 +1,8 @@
 package br.com.curso_udemy.product_api.modules.supplier.controller;
 
 import br.com.curso_udemy.product_api.config.exceptions.SuccessResponse;
+import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;
+import br.com.curso_udemy.product_api.modules.product.dto.ProductResponse;
 import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierRequest;
 import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierResponse;
 import br.com.curso_udemy.product_api.modules.supplier.service.SupplierService;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,5 +48,10 @@ public class SupplierController {
 	@DeleteMapping("/{id}")
 	public SuccessResponse delete(@PathVariable Integer id) {
 		return supplierService.delete(id);
+	}
+
+	@PutMapping("/{id}")
+	public SupplierResponse update(@PathVariable Integer id, @RequestBody SupplierRequest request) {
+		return supplierService.update(request, id);
 	}
 }

@@ -100,6 +100,19 @@ public class ProductService {
 		return ProductResponse.of(product);
 	}
 
+	public ProductResponse update(ProductRequest request, Integer id) {
+		validateProductDataNotInformed(request);
+		validateCategoryAndSupplierIdInformed(request);
+		validateInformedId(id);
+
+		var category = categoryService.findById(request.getCategoryId());
+		var supplier = supplierService.findById(request.getSupplierId());
+		var product = Product.of(request,category, supplier);
+		product.setId(id);
+		productRepository.save(product);
+		return ProductResponse.of(product);
+	}
+
 	public SuccessResponse delete(Integer id) {
 		validateInformedId(id);
         productRepository.deleteById(id);

@@ -61,6 +61,15 @@ public class SupplierService {
 		return SupplierResponse.of(supplier);
 	}
 
+	public SupplierResponse update(SupplierRequest supplierRequest, Integer id) {
+		validateSupplierNameInformed(supplierRequest);
+		validateInformedId(id);
+		var supplier  = Supplier.of(supplierRequest);
+		supplier.setId(id);
+		supplierRepository.save(supplier);
+		return SupplierResponse.of(supplier);
+	}
+
 	public SuccessResponse delete(Integer id) {
 		validateInformedId(id);
 		if(productService.existsBySupplierId(id)) {
