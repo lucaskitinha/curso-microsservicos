@@ -1,23 +1,23 @@
-package br.com.curso_udemy.product_api.modules.produto.model;
+package br.com.curso_udemy.product_api.modules.supplier.model;
 
+import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "product")
-public class Product {
+@Table(name = "supplier")
+public class Supplier {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -26,14 +26,9 @@ public class Product {
 	@Column(name = "name", nullable = false)
 	private String name;
 
-	@ManyToOne
-	@JoinColumn(name = "idsupplier", nullable = false)
-	private Supplier supplier;
-
-	@ManyToOne
-	@JoinColumn(name = "idcategory", nullable = false)
-	private Category category;
-
-	@Column(name = "quantity_available", nullable = false)
-	private Integer quantityAvailable;
+	public static Supplier of(SupplierRequest request) {
+		var supplier = new Supplier();
+		BeanUtils.copyProperties(request, supplier);
+		return supplier;
+	}
 }
