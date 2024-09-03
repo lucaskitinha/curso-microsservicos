@@ -1,8 +1,6 @@
 package br.com.curso_udemy.product_api.modules.supplier.controller;
 
 import br.com.curso_udemy.product_api.config.exceptions.SuccessResponse;
-import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;
-import br.com.curso_udemy.product_api.modules.product.dto.ProductResponse;
 import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierRequest;
 import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierResponse;
 import br.com.curso_udemy.product_api.modules.supplier.service.SupplierService;

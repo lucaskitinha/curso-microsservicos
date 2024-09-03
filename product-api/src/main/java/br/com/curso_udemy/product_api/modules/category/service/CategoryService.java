@@ -7,9 +7,6 @@ import br.com.curso_udemy.product_api.modules.category.dto.CategoryResponse;
 import br.com.curso_udemy.product_api.modules.category.model.Category;
 import br.com.curso_udemy.product_api.modules.category.repository.CategoryRepository;
 import br.com.curso_udemy.product_api.modules.product.service.ProductService;
-import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierRequest;
-import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierResponse;
-import br.com.curso_udemy.product_api.modules.supplier.model.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,7 +65,7 @@ public class CategoryService {
 		validateInformedId(id);
 		var category  = Category.of(categoryRequest);
 		category.setId(id);
-		categoryRepository.save(category);
+		category = categoryRepository.save(category);
 		return CategoryResponse.of(category);
 	}
 

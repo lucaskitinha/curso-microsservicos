@@ -2,7 +2,6 @@ package br.com.curso_udemy.product_api.modules.supplier.service;
 
 import br.com.curso_udemy.product_api.config.exceptions.SuccessResponse;
 import br.com.curso_udemy.product_api.config.exceptions.ValidationException;
-import br.com.curso_udemy.product_api.modules.category.dto.CategoryResponse;
 import br.com.curso_udemy.product_api.modules.product.service.ProductService;
 import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierRequest;
 import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierResponse;
@@ -66,7 +65,7 @@ public class SupplierService {
 		validateInformedId(id);
 		var supplier  = Supplier.of(supplierRequest);
 		supplier.setId(id);
-		supplierRepository.save(supplier);
+		supplier = supplierRepository.save(supplier);
 		return SupplierResponse.of(supplier);
 	}
 

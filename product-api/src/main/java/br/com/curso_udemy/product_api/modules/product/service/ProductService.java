@@ -2,13 +2,11 @@ package br.com.curso_udemy.product_api.modules.product.service;
 
 import br.com.curso_udemy.product_api.config.exceptions.SuccessResponse;
 import br.com.curso_udemy.product_api.config.exceptions.ValidationException;
-import br.com.curso_udemy.product_api.modules.category.model.Category;
 import br.com.curso_udemy.product_api.modules.category.service.CategoryService;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductResponse;
 import br.com.curso_udemy.product_api.modules.product.model.Product;
 import br.com.curso_udemy.product_api.modules.product.repository.ProductRepository;
-import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierResponse;
 import br.com.curso_udemy.product_api.modules.supplier.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -109,7 +107,7 @@ public class ProductService {
 		var supplier = supplierService.findById(request.getSupplierId());
 		var product = Product.of(request,category, supplier);
 		product.setId(id);
-		productRepository.save(product);
+		product = productRepository.save(product);
 		return ProductResponse.of(product);
 	}
 

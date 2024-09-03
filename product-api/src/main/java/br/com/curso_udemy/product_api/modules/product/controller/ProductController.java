@@ -4,7 +4,6 @@ import br.com.curso_udemy.product_api.config.exceptions.SuccessResponse;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductResponse;
 import br.com.curso_udemy.product_api.modules.product.service.ProductService;
-import br.com.curso_udemy.product_api.modules.supplier.dto.SupplierResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
