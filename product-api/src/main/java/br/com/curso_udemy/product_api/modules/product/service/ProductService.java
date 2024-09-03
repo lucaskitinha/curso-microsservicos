@@ -2,6 +2,8 @@ package br.com.curso_udemy.product_api.modules.product.service;
 
 import br.com.curso_udemy.product_api.config.exceptions.SuccessResponse;
 import br.com.curso_udemy.product_api.config.exceptions.ValidationException;
+import br.com.curso_udemy.product_api.modules.product.dto.ProductSalesResponse;
+import br.com.curso_udemy.product_api.modules.sales.client.SalesClient;
 import br.com.curso_udemy.product_api.modules.sales.dto.SalesConfirmationDTO;
 import br.com.curso_udemy.product_api.modules.sales.enums.SalesStatus;
 import br.com.curso_udemy.product_api.modules.sales.rabbitmq.SalesConfirmationSender;
@@ -37,6 +39,8 @@ public class ProductService {
 	private SupplierService supplierService;
 	@Autowired
 	private SalesConfirmationSender salesConfirmationSender;
+	@Autowired
+	private SalesClient salesClient;
 
 	private static final Integer ZERO = 0;
 
@@ -207,6 +211,20 @@ public class ProductService {
 		if (salesProduct.getQuantity() > existingProduct.getQuantityAvailable()) {
 			throw new ValidationException(
 					String.format("The product %s is out of stock", existingProduct.getId()));
+		}
+	}
+
+	public ProductSalesResponse findProductSales(Integer id) {
+		var product = findById(id);
+
+		try {
+			var sales = salesClient
+					.findSalesByProductId(product.getId())
+					.orElseThrow(() -> new ValidationException("The sales was not found by this product"));
+			return ProductSalesResponse.of(product, sales.getSalesId());
+
+		} catch (Exception e) {
+			throw new ValidationException("There was an error trying to get the product's sales");
 		}
 	}
 
