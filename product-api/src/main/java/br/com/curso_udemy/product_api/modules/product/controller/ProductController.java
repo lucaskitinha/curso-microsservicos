@@ -1,6 +1,7 @@
 package br.com.curso_udemy.product_api.modules.product.controller;
 
 import br.com.curso_udemy.product_api.config.exceptions.SuccessResponse;
+import br.com.curso_udemy.product_api.modules.product.dto.ProductCheckStockRequest;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductResponse;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductSalesResponse;
@@ -62,6 +63,11 @@ public class ProductController {
 	@PutMapping("/{id}")
 	public ProductResponse update(@PathVariable Integer id, @RequestBody ProductRequest request) {
 		return productService.update(request, id);
+	}
+
+	@PostMapping("check-stock")
+	public SuccessResponse checkProductsStock(@RequestBody ProductCheckStockRequest request) {
+		return productService.checkProductsStock(request);
 	}
 
 	@GetMapping("{id}/sales")
