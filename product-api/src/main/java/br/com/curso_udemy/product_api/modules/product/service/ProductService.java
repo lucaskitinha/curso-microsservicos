@@ -9,6 +9,7 @@ import br.com.curso_udemy.product_api.modules.product.model.Product;
 import br.com.curso_udemy.product_api.modules.product.repository.ProductRepository;
 import br.com.curso_udemy.product_api.modules.supplier.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,9 +22,9 @@ public class ProductService {
 
 	@Autowired
 	private ProductRepository productRepository;
-	@Autowired
+	@Lazy
 	private CategoryService categoryService;
-	@Autowired
+	@Lazy
 	private SupplierService supplierService;
 
 	private static final Integer ZERO = 0;
