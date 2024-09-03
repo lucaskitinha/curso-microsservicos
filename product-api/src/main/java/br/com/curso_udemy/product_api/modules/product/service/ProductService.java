@@ -5,6 +5,7 @@ import br.com.curso_udemy.product_api.config.exceptions.ValidationException;
 import br.com.curso_udemy.product_api.modules.category.service.CategoryService;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductResponse;
+import br.com.curso_udemy.product_api.modules.product.dto.ProductStockDTO;
 import br.com.curso_udemy.product_api.modules.product.model.Product;
 import br.com.curso_udemy.product_api.modules.product.repository.ProductRepository;
 import br.com.curso_udemy.product_api.modules.supplier.service.SupplierService;
@@ -143,6 +144,10 @@ public class ProductService {
 		if (isEmpty(request.getSupplierId())) {
 			throw new ValidationException("The supplier ID was not informed");
 		}
+	}
+
+	public void updateProductStock(ProductStockDTO productStockDTO) {
+
 	}
 
 }
