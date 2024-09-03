@@ -2,22 +2,30 @@ package br.com.curso_udemy.product_api.modules.product.service;
 
 import br.com.curso_udemy.product_api.config.exceptions.SuccessResponse;
 import br.com.curso_udemy.product_api.config.exceptions.ValidationException;
+import br.com.curso_udemy.product_api.modules.category.sales.dto.SalesConfirmationDTO;
+import br.com.curso_udemy.product_api.modules.category.sales.enums.SalesStatus;
+import br.com.curso_udemy.product_api.modules.category.sales.rabbitmq.SalesConfirmationSender;
 import br.com.curso_udemy.product_api.modules.category.service.CategoryService;
+import br.com.curso_udemy.product_api.modules.product.dto.ProductQuantityDTO;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductResponse;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductStockDTO;
 import br.com.curso_udemy.product_api.modules.product.model.Product;
 import br.com.curso_udemy.product_api.modules.product.repository.ProductRepository;
 import br.com.curso_udemy.product_api.modules.supplier.service.SupplierService;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
+@Slf4j
 @Service
 public class ProductService {
 
@@ -27,6 +35,8 @@ public class ProductService {
 	private CategoryService categoryService;
 	@Lazy
 	private SupplierService supplierService;
+	@Autowired
+	private SalesConfirmationSender salesConfirmationSender;
 
 	private static final Integer ZERO = 0;
 
@@ -147,7 +157,57 @@ public class ProductService {
 	}
 
 	public void updateProductStock(ProductStockDTO productStockDTO) {
+		try {
+			validateStockUpdateData(productStockDTO);
+			updateStock(productStockDTO);
+		} catch (Exception e) {
+			log.error("Error while trying to update stock for message with error: {}", e.getMessage(), e);
+			salesConfirmationSender
+					.sendSalesConfirmationMessage(
+							new SalesConfirmationDTO(productStockDTO.getSalesId(), SalesStatus.REJECTED)
+					);
+		}
+	}
 
+	@Transactional
+	private void validateStockUpdateData(ProductStockDTO productStockDTO) {
+		if(isEmpty(productStockDTO) || isEmpty(productStockDTO.getSalesId())) {
+			throw new ValidationException("The product data an the sales ID must be informed");
+		}
+		if(isEmpty(productStockDTO.getProducts())) {
+			throw new ValidationException("The sales' products must be informed");
+		}
+
+		productStockDTO.getProducts()
+				.forEach(product -> {
+					if(isEmpty(product.getQuantity()) || isEmpty(product.getProductId())) {
+						throw new ValidationException("The product's ID and quantity must be informed");
+					}
+				});
+	}
+
+	private void updateStock(ProductStockDTO productStockDTO) {
+		var productsForUpdate = new ArrayList<Product>();
+		productStockDTO.getProducts()
+				.forEach(salesProduct -> {
+					var existingProduct = findById(salesProduct.getProductId());
+					validateQuantityInStock(salesProduct, existingProduct);
+					existingProduct.updateStock(salesProduct.getQuantity());
+					productsForUpdate.add(existingProduct);
+				});
+		if(!isEmpty(productsForUpdate)) {
+			productRepository.saveAll(productsForUpdate);
+			var approvedMessage = new SalesConfirmationDTO(productStockDTO.getSalesId(), SalesStatus.APPROVED);
+			salesConfirmationSender.sendSalesConfirmationMessage(approvedMessage);
+		}
+
+	}
+
+	private void validateQuantityInStock(ProductQuantityDTO salesProduct, Product existingProduct) {
+		if (salesProduct.getQuantity() > existingProduct.getQuantityAvailable()) {
+			throw new ValidationException(
+					String.format("The product %s is out of stock", existingProduct.getId()));
+		}
 	}
 
 }
