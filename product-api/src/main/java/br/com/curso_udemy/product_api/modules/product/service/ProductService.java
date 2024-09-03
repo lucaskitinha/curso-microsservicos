@@ -2,9 +2,9 @@ package br.com.curso_udemy.product_api.modules.product.service;
 
 import br.com.curso_udemy.product_api.config.exceptions.SuccessResponse;
 import br.com.curso_udemy.product_api.config.exceptions.ValidationException;
-import br.com.curso_udemy.product_api.modules.category.sales.dto.SalesConfirmationDTO;
-import br.com.curso_udemy.product_api.modules.category.sales.enums.SalesStatus;
-import br.com.curso_udemy.product_api.modules.category.sales.rabbitmq.SalesConfirmationSender;
+import br.com.curso_udemy.product_api.modules.sales.dto.SalesConfirmationDTO;
+import br.com.curso_udemy.product_api.modules.sales.enums.SalesStatus;
+import br.com.curso_udemy.product_api.modules.sales.rabbitmq.SalesConfirmationSender;
 import br.com.curso_udemy.product_api.modules.category.service.CategoryService;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductQuantityDTO;
 import br.com.curso_udemy.product_api.modules.product.dto.ProductRequest;

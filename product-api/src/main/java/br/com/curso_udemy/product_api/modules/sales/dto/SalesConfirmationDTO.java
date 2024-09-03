@@ -1,6 +1,6 @@
-package br.com.curso_udemy.product_api.modules.category.sales.dto;
+package br.com.curso_udemy.product_api.modules.sales.dto;
 
-import br.com.curso_udemy.product_api.modules.category.sales.enums.SalesStatus;
+import br.com.curso_udemy.product_api.modules.sales.enums.SalesStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,6 @@
-package br.com.curso_udemy.product_api.modules.category.sales.rabbitmq;
+package br.com.curso_udemy.product_api.modules.sales.rabbitmq;
 
-import br.com.curso_udemy.product_api.modules.category.sales.dto.SalesConfirmationDTO;
+import br.com.curso_udemy.product_api.modules.sales.dto.SalesConfirmationDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
