@@ -1,15 +1,17 @@
 import express from "express";
 
-import { connect } from "./src/config/db/mongoDbConfig.js";
+import { connectMongoDb } from "./src/config/db/mongoDbConfig.js";
 import { createInitialData } from "./src/config/db/initialData.js";
 import checkToken from "./src/config/auth/checkToken.js";
+import { connectRabbitMq } from './src/config/rabbitmq/rabbitConfig.js';
 
 const app = express();
 const env = process.env;
 const PORT = env.PORT || 8082;
 
-connect();
+connectMongoDb();
 createInitialData();
+connectRabbitMq();
 
 app.use(checkToken);
 
@@ -23,4 +25,4 @@ app.get('/api/status', (req,res) => {
 
 app.listen(PORT, () => {
     console.info(`Server started successfully at port ${PORT}`);
-})
+});

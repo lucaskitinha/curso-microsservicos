@@ -3,8 +3,8 @@ import { promisify } from "util";
 
 import AuthTokenException from "./AuthTokenException.js";
 
-import * as secrets from "../secrets/secrets.js";
-import * as httpStatus from "../httpStatus.js";
+import * as secrets from "../constants/secrets.js";
+import * as httpStatus from "../constants/httpStatus.js";
 
 const emptySpace = " ";
 
