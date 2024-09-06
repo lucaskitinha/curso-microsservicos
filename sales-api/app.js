@@ -5,7 +5,7 @@ import { createInitialData } from "./src/config/db/initialData.js";
 import checkToken from "./src/config/auth/checkToken.js";
 import { connectRabbitMq } from './src/config/rabbitmq/rabbitConfig.js';
 
-import { sendMessageToProductStockUpdateQueue } from "./src/modules/sales/product/rabbitmq/productStockUpdateSender.js"
+import { sendMessageToProductStockUpdateQueue } from "./src/modules/product/rabbitmq/productStockUpdateSender.js"
 
 const app = express();
 const env = process.env;

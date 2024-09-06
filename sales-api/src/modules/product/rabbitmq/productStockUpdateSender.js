@@ -1,7 +1,7 @@
 import amqp from "amqplib/callback_api.js"
 
-import { RABBIT_MQ_URL } from "../../../../config/constants/secrets.js";
-import * as rabbitConstants from "../../../../config/rabbitmq/queue.js";
+import { RABBIT_MQ_URL } from "../../../config/constants/secrets.js";
+import * as rabbitConstants from "../../../config/rabbitmq/queue.js";
 
 export function sendMessageToProductStockUpdateQueue(message) {
     amqp.connect(RABBIT_MQ_URL, (error, connection) => {
