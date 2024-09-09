@@ -4,9 +4,11 @@ import br.com.curso_udemy.product_api.config.exceptions.ValidationException;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+@Component
 public class FeignClientAuthInterceptor implements RequestInterceptor {
 
 	private static final String AUTHORIZATION = "Authorization";
@@ -22,9 +24,9 @@ public class FeignClientAuthInterceptor implements RequestInterceptor {
 			return ((ServletRequestAttributes) RequestContextHolder
 					.getRequestAttributes())
 					.getRequest();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new ValidationException("The current request could not be processed");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			throw new ValidationException("The current request could not be proccessed.");
 		}
 	}
 }

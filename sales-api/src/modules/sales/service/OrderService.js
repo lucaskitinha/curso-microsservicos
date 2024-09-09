@@ -102,11 +102,61 @@ class OrderService {
         }
     }
 
+    async findAll() {
+        try {
+            
+            const orders = await OrderRepository.findAll();
+            if(!orders) {
+                throw new OrderException(httpStatus.BAD_REQUEST, "No orders were found");
+            } 
+            return {
+                status: httpStatus.SUCCESS,
+                salesId: orders.map(order => {
+                    return order.id;
+                }),
+            };
+        } catch (error) {
+            return {
+                status: error.status ? error.status : httpStatus.INTERNAL_SERVER_ERROR,
+                message: error.message,
+            };
+        }
+    }
+
+    async findByProductId(req) {
+        try {
+
+            const { productId } = req.params;
+            this.validateInformedProductId(productId);
+            const orders = await OrderRepository.findByProductId(productId);
+            if(!orders) {
+                throw new OrderException(httpStatus.BAD_REQUEST, "No orders were found");
+            } 
+            return {
+                status: httpStatus.SUCCESS,
+                salesId: orders.map(order => {
+                    return order.id;
+                }),
+            };
+        } catch (error) {
+            return {
+                status: error.status ? error.status : httpStatus.INTERNAL_SERVER_ERROR,
+                message: error.message,
+            };
+        }
+    }
+
     validateInformedId(id) {
         if(!id) {
             throw new OrderException(httpStatus.BAD_REQUEST, "The order ID must be informed.")
         }
-    } 
+    }
+
+    validateInformedProductId(productId) {
+        if(!productId) {
+            throw new OrderException(httpStatus.BAD_REQUEST, "The order's productId must be informed.")
+        }
+    }  
 }
 
 export default new OrderService();
