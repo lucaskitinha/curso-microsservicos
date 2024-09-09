@@ -3,24 +3,21 @@ import { sendMessageToProductStockUpdateQueue } from "../../product/rabbitmq/pro
 import * as httpStatus from "../../../config/constants/httpStatus.js";
 import { PENDING, ACCEPTED, REJECTED } from "../status/OrderStatus.js";
 import OrderException from "../exception/OrderException.js";
+import ProductClient from "../../product/client/ProductClient.js";
 
 class OrderService {
     async createOrder(req) {
         try {
-            let { orderData } = req.body;
+            let orderData  = req.body;
             this.validateOrderData(orderData);
             const { authUser } = req;
+            const { authorization } = req.headers;
 
-            let order = {
-                status: PENDING,
-                user: authUser,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                products: orderData
-            };
-            await this.validateProductStock(order);
+            let order = this.createInitialOrderData(orderData, authUser);
+            await this.validateProductStock(order, authorization);
             let createOrder = await OrderRepository.save(order);
-            sendMessageToProductStockUpdateQueue(order.products);
+            this.sendMessage(createOrder);
+            
             return {
                 status: httpStatus.SUCCESS,
                 createOrder,
@@ -33,6 +30,16 @@ class OrderService {
         }
     }
 
+    createInitialOrderData(orderData, authUser) {
+        return {
+            status: PENDING,
+            user: authUser,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            products: orderData.products,
+        };
+    }
+
     async updateOrder(orderMessage) {
         try{
             const order = JSON.parse(orderMessage)
@@ -40,6 +47,7 @@ class OrderService {
                 let existingOrder = await OrderRepository.findById(order.salesId);
                 if(existingOrder && order.status !== existingOrder.status) {
                     existingOrder.status = order.status;
+                    existingOrder.updatedAt = new Date();
                     await OrderRepository.save(existingOrder);
                 }
             } else {
@@ -58,13 +66,47 @@ class OrderService {
         }
     }
 
-    async validateProductStock(order) {
-        let stockIsOut = true;
+    async validateProductStock(order, token) {
+        let stockIsOk = await ProductClient.checkProductStock(order, token);
             
-        if(stockIsOut) {
+        if(!stockIsOk) {
             throw new OrderException(httpStatus.BAD_REQUEST, 'The stock is out for the product');
         }
     }
+
+    sendMessage(createdOrder) {
+        const message = {
+            salesId: createdOrder.id,
+            products: createdOrder.products
+        }
+        sendMessageToProductStockUpdateQueue(message);
+    }
+
+    async findById(req) {
+        try {
+            const { id } = req.params;
+            this.validateInformedId(id);
+            const existingOrder = await OrderRepository.findById(id);
+            if(!existingOrder) {
+                throw new OrderException(httpStatus.BAD_REQUEST, "The order was not informed");
+            } 
+            return {
+                status: httpStatus.SUCCESS,
+                existingOrder,
+            };
+        } catch (error) {
+            return {
+                status: error.status ? error.status : httpStatus.INTERNAL_SERVER_ERROR,
+                message: error.message,
+            };
+        }
+    }
+
+    validateInformedId(id) {
+        if(!id) {
+            throw new OrderException(httpStatus.BAD_REQUEST, "The order ID must be informed.")
+        }
+    } 
 }
 
 export default new OrderService();

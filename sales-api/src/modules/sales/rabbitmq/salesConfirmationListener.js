@@ -16,10 +16,11 @@ export function listenToSalesConfirmationQueue() {
             }
             channel.consume(rabbitConstants.SALES_CONFIRMATION_QUEUE, (message) => {
                 console.info(`Recieving message from Queue: ${message.content.toString()}`);
+                OrderService.updateOrder(message.content.toString());
             }, {
                 noAck: true,
             });
-            OrderService.updateOrder(message);
+            
         });
     });
 }
