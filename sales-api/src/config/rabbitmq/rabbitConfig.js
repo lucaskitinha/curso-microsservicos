@@ -8,21 +8,12 @@ const TWO_SECONDS = 500;
 const HALF_MINUTE = 30000;
 const CONTAINER_ENV = "container";
 
-export async function connectRabbitMq(params) {
-  const env = process.env.NODE_ENV;
-
-  if (CONTAINER_ENV === env) {
-    console.info("Waiting for RabbitMq to start...");
-    setInterval(async () => {
-      connectRabbitMqAndCreateQueues();
-    }, HALF_MINUTE);
-  } else {
-    connectRabbitMqAndCreateQueues();
-  }
+export async function connectRabbitMq() {
+  connectRabbitMqAndCreateQueues();
 }
 
 async function connectRabbitMqAndCreateQueues() {
-  amqp.connect(RABBIT_MQ_URL, (error, connection) => {
+  amqp.connect(RABBIT_MQ_URL, { timeout: 180000 }, (error, connection) => {
     if (error) {
       throw error;
     }
