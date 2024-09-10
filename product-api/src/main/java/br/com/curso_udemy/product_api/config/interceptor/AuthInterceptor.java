@@ -27,9 +27,9 @@ public class AuthInterceptor implements HandlerInterceptor {
 		if (isOptions(request) || isPublicUrl(request.getRequestURI())) {
 			return true;
 		}
-//		if (isEmpty(request.getHeader(TRANSACTION_ID))) {
-//			throw new ValidationException("The transactionid header is required.");
-//		}
+		if (isEmpty(request.getHeader(TRANSACTION_ID))) {
+			throw new ValidationException("The transactionid header is required.");
+		}
 		var authorization = request.getHeader(AUTHORIZATION);
 		jwtService.validateAuthorization(authorization);
 		request.setAttribute("serviceid", UUID.randomUUID().toString());
